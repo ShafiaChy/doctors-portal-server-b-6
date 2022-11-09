@@ -38,7 +38,7 @@ function verifyJWT(req, res, next) {
 const auth = {
   auth: {
     api_key: process.env.EMAIL_API_KEY,
-    domain: process.env.EMAIL_SENDER,
+    domain: "sandbox9ebae96ecf154d508f3f35678d1787db.mailgun.org",
   },
 };
 
@@ -133,7 +133,7 @@ async function run() {
     };
 
     app.post("/create-payment-intent", verifyJWT, async (req, res) => {
-      const service = req.body;
+      const service = req.body.appointment;
       const price = service.price;
       const amount = price * 100;
       const paymentIntent = await stripe.paymentIntents.create({
@@ -283,6 +283,7 @@ async function run() {
         filter,
         updatedDoc
       );
+      sendPaymentConfirmationEmail(req.body.appointment);
       res.send(updatedBooking);
     });
 
